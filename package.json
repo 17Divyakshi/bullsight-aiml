@@ -1,0 +1,22 @@
+{
+  "name": "bullsight-ai-stock-intelligence",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run build:frontend && node server/server.js",
+    "start": "node server/server.js",
+    "build:frontend": "npm --prefix frontend run build",
+    "build": "npm run build:frontend",
+    "lint": "node --check server/server.js && npm run build:frontend"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.114.3",
+    "@react-three/fiber": "^8.17.10",
+    "three": "^0.169.0"
+  }
+}

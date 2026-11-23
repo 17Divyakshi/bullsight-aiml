@@ -1,0 +1,126 @@
+{
+  "ticker": "INFY.NS",
+  "stock": "INFOSYS",
+  "feature_names": [
+    "Open",
+    "High",
+    "Low",
+    "Close",
+    "SMA_10",
+    "SMA_20",
+    "EMA_10",
+    "EMA_20",
+    "RSI",
+    "MACD",
+    "MACD_Signal",
+    "BB_Middle",
+    "BB_Upper",
+    "BB_Lower"
+  ],
+  "sequence_length": 30,
+  "selected_model": "Linear Regression",
+  "selection_metric": "validation MAE",
+  "data_adjustment": "yfinance auto_adjust=True for adjusted OHLC",
+  "train_end_feature_date": "2024-07-25",
+  "validation_end_feature_date": "2025-09-18",
+  "last_training_feature_date": "2024-07-25",
+  "test_last_feature_date": "2026-11-20",
+  "feature_engineering": "CE-1 rolling RSI(14); pandas ewm adjust=False; Bollinger std ddof=1",
+  "split": {
+    "train": 831,
+    "validation": 286,
+    "test": 288
+  },
+  "models": [
+    "Linear Regression",
+    "Random Forest",
+    "LSTM"
+  ],
+  "metrics": [
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "Linear Regression",
+      "split": "validation",
+      "MAE": 18.27808696731491,
+      "RMSE": 25.039563381766687,
+      "R2": 0.9751306953107849,
+      "MAPE": 1.1485663155602146
+    },
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "Linear Regression",
+      "split": "test",
+      "MAE": 17.30914542528835,
+      "RMSE": 23.589355688501197,
+      "R2": 0.9844957390210036,
+      "MAPE": 1.4344810544276891
+    },
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "Random Forest",
+      "split": "validation",
+      "MAE": 55.28106875203936,
+      "RMSE": 74.30753113226125,
+      "R2": 0.7809840197011065,
+      "MAPE": 3.2415574695343405
+    },
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "Random Forest",
+      "split": "test",
+      "MAE": 31.25969382876759,
+      "RMSE": 44.342937423010696,
+      "R2": 0.9452142224161749,
+      "MAPE": 2.7591354962052623
+    },
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "LSTM",
+      "split": "validation",
+      "MAE": 80.73513473830856,
+      "RMSE": 100.62010252729195,
+      "R2": 0.5984129952556632,
+      "MAPE": 4.800708371466952
+    },
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "LSTM",
+      "split": "test",
+      "MAE": 36.13653712802463,
+      "RMSE": 47.35771197232243,
+      "R2": 0.9375114660090702,
+      "MAPE": 3.079202978137874
+    },
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "Previous Close Baseline",
+      "split": "validation",
+      "MAE": 17.84481918228256,
+      "RMSE": 25.01118227236304,
+      "R2": 0.9751870396200868,
+      "MAPE": 1.124087069764405
+    },
+    {
+      "stock": "INFOSYS",
+      "ticker": "INFY.NS",
+      "model": "Previous Close Baseline",
+      "split": "test",
+      "MAE": 16.982437133789062,
+      "RMSE": 23.302166324913607,
+      "R2": 0.9848709552315101,
+      "MAPE": 1.4030092755848322
+    }
+  ],
+  "note": "Validation selects model. All original test metrics are frozen before final refit.",
+  "final_model_file": "selected_final_pipeline.joblib",
+  "final_refit_end_feature_date": "2025-09-18",
+  "final_refit_rows": 1118,
+  "final_refit_note": "Train+validation only; no test labels; separate from frozen test evaluation."
+}

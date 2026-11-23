@@ -1,0 +1,126 @@
+{
+  "ticker": "TCS.NS",
+  "stock": "TCS",
+  "feature_names": [
+    "Open",
+    "High",
+    "Low",
+    "Close",
+    "SMA_10",
+    "SMA_20",
+    "EMA_10",
+    "EMA_20",
+    "RSI",
+    "MACD",
+    "MACD_Signal",
+    "BB_Middle",
+    "BB_Upper",
+    "BB_Lower"
+  ],
+  "sequence_length": 30,
+  "selected_model": "Linear Regression",
+  "selection_metric": "validation MAE",
+  "data_adjustment": "yfinance auto_adjust=True for adjusted OHLC",
+  "train_end_feature_date": "2024-07-25",
+  "validation_end_feature_date": "2025-09-18",
+  "last_training_feature_date": "2024-07-25",
+  "test_last_feature_date": "2026-11-20",
+  "feature_engineering": "CE-1 rolling RSI(14); pandas ewm adjust=False; Bollinger std ddof=1",
+  "split": {
+    "train": 831,
+    "validation": 286,
+    "test": 288
+  },
+  "models": [
+    "Linear Regression",
+    "Random Forest",
+    "LSTM"
+  ],
+  "metrics": [
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "Linear Regression",
+      "split": "validation",
+      "MAE": 32.61987008276296,
+      "RMSE": 46.31094548326027,
+      "R2": 0.9870677629559583,
+      "MAPE": 0.9208754487872151
+    },
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "Linear Regression",
+      "split": "test",
+      "MAE": 33.99289576084763,
+      "RMSE": 46.51199569503435,
+      "R2": 0.9825840747251762,
+      "MAPE": 1.3709424903056868
+    },
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "Random Forest",
+      "split": "validation",
+      "MAE": 54.39394423163236,
+      "RMSE": 78.26382345410698,
+      "R2": 0.963065818169512,
+      "MAPE": 1.4571611283701913
+    },
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "Random Forest",
+      "split": "test",
+      "MAE": 234.611052128967,
+      "RMSE": 304.7269161915867,
+      "R2": 0.2524534568787806,
+      "MAPE": 10.39476029129267
+    },
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "LSTM",
+      "split": "validation",
+      "MAE": 111.48192676464161,
+      "RMSE": 142.07710818572477,
+      "R2": 0.8782820640404903,
+      "MAPE": 3.0410731063535796
+    },
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "LSTM",
+      "split": "test",
+      "MAE": 237.5441377427843,
+      "RMSE": 291.01288078934124,
+      "R2": 0.31822506848049914,
+      "MAPE": 10.386905367139747
+    },
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "Previous Close Baseline",
+      "split": "validation",
+      "MAE": 31.911920720880683,
+      "RMSE": 45.74502122501084,
+      "R2": 0.98738189816402,
+      "MAPE": 0.8970882118690422
+    },
+    {
+      "stock": "TCS",
+      "ticker": "TCS.NS",
+      "model": "Previous Close Baseline",
+      "split": "test",
+      "MAE": 32.361572265625,
+      "RMSE": 45.13159568952236,
+      "R2": 0.983602487074094,
+      "MAPE": 1.3021693017246938
+    }
+  ],
+  "note": "Validation selects model. All original test metrics are frozen before final refit.",
+  "final_model_file": "selected_final_pipeline.joblib",
+  "final_refit_end_feature_date": "2025-09-18",
+  "final_refit_rows": 1118,
+  "final_refit_note": "Train+validation only; no test labels; separate from frozen test evaluation."
+}

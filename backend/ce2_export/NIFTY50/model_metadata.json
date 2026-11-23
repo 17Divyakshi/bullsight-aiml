@@ -1,0 +1,126 @@
+{
+  "ticker": "^NSEI",
+  "stock": "NIFTY50",
+  "feature_names": [
+    "Open",
+    "High",
+    "Low",
+    "Close",
+    "SMA_10",
+    "SMA_20",
+    "EMA_10",
+    "EMA_20",
+    "RSI",
+    "MACD",
+    "MACD_Signal",
+    "BB_Middle",
+    "BB_Upper",
+    "BB_Lower"
+  ],
+  "sequence_length": 30,
+  "selected_model": "Linear Regression",
+  "selection_metric": "validation MAE",
+  "data_adjustment": "yfinance auto_adjust=True for adjusted OHLC",
+  "train_end_feature_date": "2024-07-25",
+  "validation_end_feature_date": "2025-09-18",
+  "last_training_feature_date": "2024-07-25",
+  "test_last_feature_date": "2026-11-20",
+  "feature_engineering": "CE-1 rolling RSI(14); pandas ewm adjust=False; Bollinger std ddof=1",
+  "split": {
+    "train": 831,
+    "validation": 286,
+    "test": 287
+  },
+  "models": [
+    "Linear Regression",
+    "Random Forest",
+    "LSTM"
+  ],
+  "metrics": [
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "Linear Regression",
+      "split": "validation",
+      "MAE": 148.63877461359638,
+      "RMSE": 199.99322150162675,
+      "R2": 0.9489326036934141,
+      "MAPE": 0.6152573771321024
+    },
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "Linear Regression",
+      "split": "test",
+      "MAE": 156.94190859958218,
+      "RMSE": 210.18525103104662,
+      "R2": 0.9631640942983667,
+      "MAPE": 0.6477458876260314
+    },
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "Random Forest",
+      "split": "validation",
+      "MAE": 510.4430192727563,
+      "RMSE": 620.0024064603109,
+      "R2": 0.509205243894,
+      "MAPE": 2.0908610980178852
+    },
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "Random Forest",
+      "split": "test",
+      "MAE": 762.3371827743115,
+      "RMSE": 946.9808340056694,
+      "R2": 0.25226233789966546,
+      "MAPE": 3.0506362373890603
+    },
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "LSTM",
+      "split": "validation",
+      "MAE": 1156.2480263876748,
+      "RMSE": 1274.3476708886294,
+      "R2": -1.0734283034514571,
+      "MAPE": 4.68762883845842
+    },
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "LSTM",
+      "split": "test",
+      "MAE": 1369.5074994555748,
+      "RMSE": 1586.7929561170588,
+      "R2": -1.099459034329096,
+      "MAPE": 5.469543844207458
+    },
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "Previous Close Baseline",
+      "split": "validation",
+      "MAE": 144.64182009396853,
+      "RMSE": 196.0635904193598,
+      "R2": 0.9509197160826648,
+      "MAPE": 0.5980591600230085
+    },
+    {
+      "stock": "NIFTY50",
+      "ticker": "^NSEI",
+      "model": "Previous Close Baseline",
+      "split": "test",
+      "MAE": 156.7094063044425,
+      "RMSE": 207.2887929191688,
+      "R2": 0.964172333566497,
+      "MAPE": 0.646502247305242
+    }
+  ],
+  "note": "Validation selects model. All original test metrics are frozen before final refit.",
+  "final_model_file": "selected_final_pipeline.joblib",
+  "final_refit_end_feature_date": "2025-09-18",
+  "final_refit_rows": 1118,
+  "final_refit_note": "Train+validation only; no test labels; separate from frozen test evaluation."
+}

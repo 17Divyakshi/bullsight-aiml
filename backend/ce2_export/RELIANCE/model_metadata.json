@@ -1,0 +1,126 @@
+{
+  "ticker": "RELIANCE.NS",
+  "stock": "RELIANCE",
+  "feature_names": [
+    "Open",
+    "High",
+    "Low",
+    "Close",
+    "SMA_10",
+    "SMA_20",
+    "EMA_10",
+    "EMA_20",
+    "RSI",
+    "MACD",
+    "MACD_Signal",
+    "BB_Middle",
+    "BB_Upper",
+    "BB_Lower"
+  ],
+  "sequence_length": 30,
+  "selected_model": "Linear Regression",
+  "selection_metric": "validation MAE",
+  "data_adjustment": "yfinance auto_adjust=True for adjusted OHLC",
+  "train_end_feature_date": "2024-07-25",
+  "validation_end_feature_date": "2025-09-18",
+  "last_training_feature_date": "2024-07-25",
+  "test_last_feature_date": "2026-11-20",
+  "feature_engineering": "CE-1 rolling RSI(14); pandas ewm adjust=False; Bollinger std ddof=1",
+  "split": {
+    "train": 831,
+    "validation": 286,
+    "test": 288
+  },
+  "models": [
+    "Linear Regression",
+    "Random Forest",
+    "LSTM"
+  ],
+  "metrics": [
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "Linear Regression",
+      "split": "validation",
+      "MAE": 13.14028509238346,
+      "RMSE": 17.482840259014292,
+      "R2": 0.9689264073436218,
+      "MAPE": 0.9837464706652452
+    },
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "Linear Regression",
+      "split": "test",
+      "MAE": 13.811612523417487,
+      "RMSE": 19.488726068473188,
+      "R2": 0.9619553904412388,
+      "MAPE": 1.021094751619794
+    },
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "Random Forest",
+      "split": "validation",
+      "MAE": 22.561880550676907,
+      "RMSE": 28.951169795392364,
+      "R2": 0.9147882033519246,
+      "MAPE": 1.6799353988822694
+    },
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "Random Forest",
+      "split": "test",
+      "MAE": 27.571971908325548,
+      "RMSE": 35.4595255922472,
+      "R2": 0.874051769352789,
+      "MAPE": 2.0584757950648833
+    },
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "LSTM",
+      "split": "validation",
+      "MAE": 31.864588170618443,
+      "RMSE": 39.50790465843706,
+      "R2": 0.8413151434810644,
+      "MAPE": 2.382555103639697
+    },
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "LSTM",
+      "split": "test",
+      "MAE": 43.43173938327365,
+      "RMSE": 52.03230316717199,
+      "R2": 0.7288108380930741,
+      "MAPE": 3.171499604555856
+    },
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "Previous Close Baseline",
+      "split": "validation",
+      "MAE": 12.985292234620848,
+      "RMSE": 17.218017989295237,
+      "R2": 0.969860655413101,
+      "MAPE": 0.971907952441714
+    },
+    {
+      "stock": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "model": "Previous Close Baseline",
+      "split": "test",
+      "MAE": 13.64750968085395,
+      "RMSE": 19.38441332015558,
+      "R2": 0.9623615654816793,
+      "MAPE": 1.0085431925137465
+    }
+  ],
+  "note": "Validation selects model. All original test metrics are frozen before final refit.",
+  "final_model_file": "selected_final_pipeline.joblib",
+  "final_refit_end_feature_date": "2025-09-18",
+  "final_refit_rows": 1118,
+  "final_refit_note": "Train+validation only; no test labels; separate from frozen test evaluation."
+}

@@ -1,0 +1,126 @@
+{
+  "ticker": "HDFCBANK.NS",
+  "stock": "HDFCBANK",
+  "feature_names": [
+    "Open",
+    "High",
+    "Low",
+    "Close",
+    "SMA_10",
+    "SMA_20",
+    "EMA_10",
+    "EMA_20",
+    "RSI",
+    "MACD",
+    "MACD_Signal",
+    "BB_Middle",
+    "BB_Upper",
+    "BB_Lower"
+  ],
+  "sequence_length": 30,
+  "selected_model": "Linear Regression",
+  "selection_metric": "validation MAE",
+  "data_adjustment": "yfinance auto_adjust=True for adjusted OHLC",
+  "train_end_feature_date": "2024-07-25",
+  "validation_end_feature_date": "2025-09-18",
+  "last_training_feature_date": "2024-07-25",
+  "test_last_feature_date": "2026-11-20",
+  "feature_engineering": "CE-1 rolling RSI(14); pandas ewm adjust=False; Bollinger std ddof=1",
+  "split": {
+    "train": 831,
+    "validation": 286,
+    "test": 288
+  },
+  "models": [
+    "Linear Regression",
+    "Random Forest",
+    "LSTM"
+  ],
+  "metrics": [
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "Linear Regression",
+      "split": "validation",
+      "MAE": 7.913309187047594,
+      "RMSE": 10.171559781847701,
+      "R2": 0.9764940447137929,
+      "MAPE": 0.9031397848665295
+    },
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "Linear Regression",
+      "split": "test",
+      "MAE": 8.548914964907238,
+      "RMSE": 11.285917148229332,
+      "R2": 0.9877884882017018,
+      "MAPE": 1.0592605201273444
+    },
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "Random Forest",
+      "split": "validation",
+      "MAE": 76.1246630983285,
+      "RMSE": 98.02560839709788,
+      "R2": -1.183141506621339,
+      "MAPE": 8.18039372130688
+    },
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "Random Forest",
+      "split": "test",
+      "MAE": 61.4170921953977,
+      "RMSE": 91.59247078576539,
+      "R2": 0.19570518819073035,
+      "MAPE": 6.5846432649120645
+    },
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "LSTM",
+      "split": "validation",
+      "MAE": 65.80685424804688,
+      "RMSE": 83.36777777043838,
+      "R2": -0.57906222479289,
+      "MAPE": 7.091587583455648
+    },
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "LSTM",
+      "split": "test",
+      "MAE": 57.354807959662544,
+      "RMSE": 80.45399106578304,
+      "R2": 0.37942981850246105,
+      "MAPE": 6.244423747126088
+    },
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "Previous Close Baseline",
+      "split": "validation",
+      "MAE": 7.341401000122924,
+      "RMSE": 9.64275622932046,
+      "R2": 0.9788745888781882,
+      "MAPE": 0.842403668283542
+    },
+    {
+      "stock": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "model": "Previous Close Baseline",
+      "split": "test",
+      "MAE": 8.305205663045248,
+      "RMSE": 11.160272052991925,
+      "R2": 0.9880588740000491,
+      "MAPE": 1.0324415662505344
+    }
+  ],
+  "note": "Validation selects model. All original test metrics are frozen before final refit.",
+  "final_model_file": "selected_final_pipeline.joblib",
+  "final_refit_end_feature_date": "2025-09-18",
+  "final_refit_rows": 1118,
+  "final_refit_note": "Train+validation only; no test labels; separate from frozen test evaluation."
+}

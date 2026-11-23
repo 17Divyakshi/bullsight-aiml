@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+.dark {
+  --bg-app: #070B1A;
+  --bg-sidebar: #0A1024;
+  --bg-secondary: #10182B;
+  --bg-card: #121C33;
+  --bg-elevated: #151F36;
+  --bg-hover: #1B2846;
+
+  --neon-bull: #31E981;
+  --electric-blue: #4D8DFF;
+  --cyber-cyan: #38D9F5;
+  --accent-purple: #9065FF;
+  --bear-red: #FF586A;
+
+  --text-primary: #F8FAFF;
+  --text-secondary: #AAB7D0;
+  --text-muted: #7B8AA8;
+
+  --border-color: rgba(125, 160, 255, 0.18);
+  --border-subtle: rgba(125, 160, 255, 0.11);
+
+  --chart-grid: rgba(125, 160, 255, 0.12);
+  --chart-tooltip-bg: #10182B;
+  --chart-tooltip-text: #F8FAFF;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: #070B1A;
+  }
+
+  body {
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.55;
+    background-image:
+      radial-gradient(circle 920px at 78% 12%, rgba(77, 141, 255, 0.16), transparent 65%),
+      radial-gradient(circle 760px at 18% 8%, rgba(49, 233, 129, 0.08), transparent 62%),
+      radial-gradient(circle 720px at 85% 78%, rgba(144, 101, 255, 0.12), transparent 65%),
+      radial-gradient(circle 640px at 12% 85%, rgba(56, 217, 245, 0.08), transparent 65%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Tabular numerals for strict financial alignment */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom dark scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070B1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(125, 160, 255, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 217, 245, 0.45);
+}
+
+/* Subtle futuristic perspective grid background */
+.bg-grid-pattern {
+  background-size: 42px 42px;
+  background-image:
+    linear-gradient(to right, rgba(77, 141, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(77, 141, 255, 0.07) 1px, transparent 1px);
+}
+
+/* Lightweight compositor entrance animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Market ticker tape animation */
+@keyframes tickerTape {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: tickerTape 46s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Cinematic dark fintech surface card */
+.bull-card {
+  background: linear-gradient(180deg, rgba(21, 31, 54, 0.88) 0%, rgba(16, 24, 43, 0.94) 100%);
+  border: 1px solid rgba(125, 160, 255, 0.18);
+  border-radius: 1rem;
+  box-shadow:
+    0 12px 32px -12px rgba(2, 6, 20, 0.78),
+    inset 0 1px 0 0 rgba(248, 250, 255, 0.05);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease,
+              box-shadow 0.22s ease;
+}
+
+.bull-card:hover {
+  border-color: rgba(56, 217, 245, 0.32);
+  box-shadow:
+    0 18px 36px -12px rgba(77, 141, 255, 0.22),
+    inset 0 1px 0 0 rgba(248, 250, 255, 0.08);
+}
+
+.bull-card-interactive:hover {
+  transform: translateY(-2px);
+}
+
+.bull-card-elevated {
+  background-color: var(--bg-elevated);
+  border: 1px solid rgba(125, 160, 255, 0.24);
+  border-radius: 1rem;
+  box-shadow: 0 16px 36px -12px rgba(2, 6, 20, 0.85);
+}
+
+/* Dark glassmorphism panel (never layered directly over WebGL canvases) */
+.glass-panel {
+  background: rgba(16, 24, 43, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(125, 160, 255, 0.2);
+}
+
+/* Restrained futuristic glows */
+.glow-bull {
+  box-shadow: 0 8px 28px -6px rgba(49, 233, 129, 0.34);
+}
+
+.glow-blue {
+  box-shadow: 0 8px 28px -6px rgba(77, 141, 255, 0.34);
+}
+
+/* Focus accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #38D9F5;
+  outline-offset: 2px;
+}
+
+/* Respect user reduced motion settings */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
