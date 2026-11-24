@@ -386,37 +386,92 @@ def get_exported_evaluation_data(symbol: Optional[str] = None) -> Dict[str, Any]
     }
 
 
+
 def get_exported_backtesting_data(symbol: Optional[str] = None) -> Dict[str, Any]:
     export_dir = get_export_dir()
-    bt_csv = _read_csv_records(
-        ["backtesting_results.csv", "backtest_results.csv", "metrics/backtesting_results.csv"],
-        symbol=symbol,
-    )
-    summary_json = _find_first_existing(export_dir, ["backtesting_summary.json", "metrics/backtesting_summary.json"])
-    summary_data = {}
-    if summary_json:
-        try:
-            with open(summary_json, "r", encoding="utf-8") as f:
-                summary_data = json.load(f)
-        except Exception:
-            summary_data = {}
 
-    available = bool(bt_csv["available"] and len(bt_csv["rows"]) > 0)
+    stock_mapping = {
+        "^NSEI": "NIFTY50",
+        "RELIANCE.NS": "RELIANCE",
+        "TCS.NS": "TCS",
+        "INFY.NS": "INFOSYS",
+        "HDFCBANK.NS": "HDFCBANK",
+    }
+
+    sym = sanitize_symbol(symbol) if symbol else None
+    rows = []
+    summary_data = {}
+    source_files = []
+
+    for ticker, folder in stock_mapping.items():
+        if sym and ticker != sym:
+            continue
+
+        csv_path = export_dir / folder / "backtest.csv"
+
+        if csv_path.is_file():
+            try:
+                df = pd.read_csv(csv_path)
+                df = df.astype(object).where(pd.notnull(df), None)
+                rows.extend(df.to_dict(orient="records"))
+                source_files.append(str(csv_path))
+            except Exception as exc:
+                logger.error(f"Backtesting CSV error: {exc}")
+
+    summary_path = export_dir / "backtest_summary.csv"
+
+    if summary_path.is_file():
+        try:
+            summary_df = pd.read_csv(summary_path)
+
+            for ticker, folder in stock_mapping.items():
+                matched = summary_df[
+                    summary_df["stock"].astype(str).str.upper().str.strip()
+                    == folder
+                ]
+
+                if not matched.empty:
+                    record = matched.iloc[0]
+
+                    summary_data[ticker] = {
+                        "strategy_return_pct": float(
+                            record["strategy_total_return_pct"]
+                        ),
+                        "buy_hold_return_pct": float(
+                            record["buy_hold_total_return_pct"]
+                        ),
+                        "max_drawdown_pct": float(
+                            record["max_drawdown_pct"]
+                        ),
+                        "transaction_cost": (
+                            f'{record["transaction_cost_bps_per_side"]:g} bps/side'
+                        ),
+                        "trades": int(record["trades"]),
+                        "selected_model": str(record["selected_model"]),
+                    }
+
+        except Exception as exc:
+            logger.error(f"Backtesting summary error: {exc}")
+
+    available = bool(rows)
+
     return {
         "available": available,
         "ml_verified": available,
         "export_dir": str(export_dir),
-        "symbol": sanitize_symbol(symbol) if symbol else None,
+        "symbol": sym,
         "execution_rule": "Next-session Open entry and same-session Close exit",
         "summary": summary_data,
-        "rows": bt_csv["rows"],
-        "source_file": bt_csv["path"],
+        "rows": rows,
+        "source_file": source_files[0] if source_files else None,
         "message": (
             "Loaded exported backtesting results."
             if available
-            else f"Exported backtesting_results.csv was not found in {export_dir}. Backtesting figures are unavailable until the Colab export artifacts are placed."
+            else "Backtesting CSV files were not found."
         ),
     }
+
+
 
 
 def get_ce2_overall_status() -> Dict[str, Any]:

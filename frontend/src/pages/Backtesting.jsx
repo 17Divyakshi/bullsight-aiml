@@ -72,13 +72,13 @@ export const Backtesting = () => {
     if (!rows.length) return [];
     const sample = rows[0];
     const hasCurveCols =
-      pickField(sample, ['date', 'Date', 'trading_date']) !== null &&
+      pickField(sample, ['target_date', 'date', 'Date', 'trading_date']) !== null &&
       (pickField(sample, ['strategy_equity', 'Strategy_Equity', 'cumulative_strategy_return', 'strategy_return_cum']) !== null ||
         pickField(sample, ['buy_hold_equity', 'Buy_Hold_Equity', 'benchmark_equity']) !== null);
 
     if (!hasCurveCols) return [];
     return rows.map((r, idx) => ({
-      date: pickField(r, ['date', 'Date', 'trading_date']) || `Session ${idx + 1}`,
+      date: pickField(r, ['target_date', 'date', 'Date', 'trading_date']) || `Session ${idx + 1}`,
       strategy: Number(
         pickField(r, ['strategy_equity', 'Strategy_Equity', 'cumulative_strategy_return', 'strategy_return_cum', 'strategy_cumulative_pct']) ?? 0
       ),
