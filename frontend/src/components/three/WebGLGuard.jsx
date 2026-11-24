@@ -1,57 +1,102 @@
+
 import React, { Component, useState, useEffect } from 'react';
 import { Layers } from 'lucide-react';
 
+let cachedCapabilities = null;
+
 export function detectWebGLCapabilities() {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return { supported: false, isSoftwareRenderer: true, reducedMotion: false };
+    return {
+      supported: false,
+      isSoftwareRenderer: true,
+      reducedMotion: false
+    };
   }
 
   const reducedMotion = Boolean(
-    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
   );
+
+  if (cachedCapabilities) {
+    return { ...cachedCapabilities, reducedMotion };
+  }
+
+  let gl = null;
 
   try {
     const canvas = document.createElement('canvas');
-    const gl =
-      canvas.getContext('webgl2', { powerPreference: 'high-performance' }) ||
+
+    gl =
+      canvas.getContext('webgl2', {
+        powerPreference: 'high-performance'
+      }) ||
       canvas.getContext('webgl') ||
       canvas.getContext('experimental-webgl');
 
     if (!gl) {
-      return { supported: false, isSoftwareRenderer: true, reducedMotion };
+      return {
+        supported: false,
+        isSoftwareRenderer: true,
+        reducedMotion
+      };
     }
 
-    let renderer = '';
-    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-    if (debugInfo) {
-      renderer = String(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '');
-    } else {
-      renderer = String(gl.getParameter(gl.RENDERER) || '');
-    }
+    const debugInfo = gl.getExtension(
+      'WEBGL_debug_renderer_info'
+    );
 
-    const isSoftwareRenderer = /SwiftShader|llvmpipe|softpipe|Software|Basic Render/i.test(renderer);
+    const renderer = debugInfo
+      ? String(
+          gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || ''
+        )
+      : String(gl.getParameter(gl.RENDERER) || '');
 
-    const loseExt = gl.getExtension('WEBGL_lose_context');
-    if (loseExt) {
-      // keep clean; do not force lose
-    }
+    const isSoftwareRenderer =
+      /SwiftShader|llvmpipe|softpipe|Software|Basic Render/i.test(renderer);
 
-    return { supported: true, isSoftwareRenderer, reducedMotion };
+    cachedCapabilities = {
+      supported: true,
+      isSoftwareRenderer
+    };
+
+    return { ...cachedCapabilities, reducedMotion };
+
   } catch {
-    return { supported: false, isSoftwareRenderer: true, reducedMotion };
+    return {
+      supported: false,
+      isSoftwareRenderer: true,
+      reducedMotion
+    };
+  } finally {
+    // Release only the temporary detection context.
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
   }
 }
 
 export function useWebGLCapabilities() {
-  const [caps, setCaps] = useState(() => detectWebGLCapabilities());
+  const [caps, setCaps] = useState(
+    () => detectWebGLCapabilities()
+  );
 
   useEffect(() => {
-    setCaps(detectWebGLCapabilities());
-    const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    if (!mq) return undefined;
-    const onChange = () => setCaps(detectWebGLCapabilities());
+    const mq = window.matchMedia?.(
+      '(prefers-reduced-motion: reduce)'
+    );
+
+    if (!mq) return;
+
+    const onChange = () => {
+      setCaps(prev => ({
+        ...prev,
+        reducedMotion: mq.matches
+      }));
+    };
+
     mq.addEventListener?.('change', onChange);
-    return () => mq.removeEventListener?.('change', onChange);
+
+    return () => {
+      mq.removeEventListener?.('change', onChange);
+    };
   }, []);
 
   return caps;
@@ -68,20 +113,24 @@ class WebGLErrorBoundary extends Component {
   }
 
   componentDidCatch(err) {
-    console.warn('[BULLSIGHT 3D] Falling back from WebGL boundary:', err?.message || err);
+    console.warn(
+      '[BULLSIGHT 3D] WebGL error:',
+      err?.message || err
+    );
   }
 
   render() {
     if (this.state.hasError) {
       return this.props.fallback;
     }
+
     return this.props.children;
   }
 }
 
 export const WebGLFallbackCard = ({
   title = 'Interactive 3D Terminal View',
-  subtitle = 'Hardware WebGL rendering is unavailable on this browser session. Core analytics and 2D charts remain fully active.',
+  subtitle = 'Hardware WebGL rendering is unavailable. Core analytics and 2D charts remain active.',
   heightClass = 'h-[420px]',
 }) => (
   <div
@@ -90,8 +139,14 @@ export const WebGLFallbackCard = ({
     <div className="w-12 h-12 rounded-2xl bg-[#4D8DFF]/15 border border-[#38D9F5]/30 text-[#38D9F5] flex items-center justify-center">
       <Layers className="w-6 h-6" />
     </div>
-    <h3 className="text-sm font-bold font-display text-[#F8FAFF]">{title}</h3>
-    <p className="text-xs text-[#AAB7D0] max-w-sm leading-relaxed">{subtitle}</p>
+
+    <h3 className="text-sm font-bold font-display text-[#F8FAFF]">
+      {title}
+    </h3>
+
+    <p className="text-xs text-[#AAB7D0] max-w-sm leading-relaxed">
+      {subtitle}
+    </p>
   </div>
 );
 
@@ -115,5 +170,9 @@ export const WebGLGuard = ({
     return fallback;
   }
 
-  return <WebGLErrorBoundary fallback={fallback}>{children}</WebGLErrorBoundary>;
+  return (
+    <WebGLErrorBoundary fallback={fallback}>
+      {children}
+    </WebGLErrorBoundary>
+  );
 };

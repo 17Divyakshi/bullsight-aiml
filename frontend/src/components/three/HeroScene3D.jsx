@@ -34,8 +34,8 @@ function BullSculpture({ position = [-1.45, 0, 0.72], reducedMotion = false }) {
     if (!reducedMotion) {
       const t = state.clock.elapsedTime;
       groupRef.current.position.y = position[1] + Math.sin(t * 1.4) * 0.035;
-      const targetScale = hovered ? 1.055 : 1.0;
-      groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 1 - Math.exp(-8 * dt));
+      const targetScale = hovered ? 1.10 : 1.0;
+      groupRef.current.scale.setScalar(THREE.MathUtils.damp(groupRef.current.scale.x, targetScale, 8, dt));
     }
   });
 
@@ -60,11 +60,11 @@ function BullSculpture({ position = [-1.45, 0, 0.72], reducedMotion = false }) {
       ref={groupRef}
       position={position}
       rotation={[0, 0.48, 0]}
-      onPointerOver={e => {
+      onPointerEnter={e => {
         e.stopPropagation();
         setHovered(true);
       }}
-      onPointerOut={() => setHovered(false)}
+      onPointerLeave={() => setHovered(false)}
     >
       {/* Glowing circular bull plinth */}
       <mesh position={[0, 0.05, 0]}>
@@ -144,8 +144,8 @@ function BearSculpture({ position = [1.48, 0, 0.72], reducedMotion = false }) {
     if (!reducedMotion) {
       const t = state.clock.elapsedTime;
       groupRef.current.position.y = position[1] + Math.sin(t * 1.4 + Math.PI) * 0.03;
-      const targetScale = hovered ? 1.055 : 1.0;
-      groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 1 - Math.exp(-8 * dt));
+      const targetScale = hovered ? 1.10 : 1.0;
+      groupRef.current.scale.setScalar(THREE.MathUtils.damp(groupRef.current.scale.x, targetScale, 8, dt));
     }
   });
 
@@ -168,11 +168,11 @@ function BearSculpture({ position = [1.48, 0, 0.72], reducedMotion = false }) {
       ref={groupRef}
       position={position}
       rotation={[0, -0.48, 0]}
-      onPointerOver={e => {
+      onPointerEnter={e => {
         e.stopPropagation();
         setHovered(true);
       }}
-      onPointerOut={() => setHovered(false)}
+      onPointerLeave={() => setHovered(false)}
     >
       {/* Bear plinth */}
       <mesh position={[0, 0.05, 0]}>
@@ -285,11 +285,11 @@ function HolographicDisplay({ reducedMotion = false }) {
     <group
       ref={displayRef}
       position={[0, 1.95, -0.95]}
-      onPointerOver={e => {
+      onPointerEnter={e => {
         e.stopPropagation();
         setHovered(true);
       }}
-      onPointerOut={() => setHovered(false)}
+      onPointerLeave={() => setHovered(false)}
     >
       {/* Translucent holographic glass frame */}
       <mesh>
@@ -300,7 +300,7 @@ function HolographicDisplay({ reducedMotion = false }) {
           opacity={0.42}
           roughness={0.18}
           metalness={0.35}
-          transmission={0.2}
+          transmission={0}
         />
       </mesh>
       {/* Wireframe cyan rim */}
@@ -432,21 +432,8 @@ function TerminalBase({ reducedMotion = false }) {
   );
 }
 
-function CameraRig({ pointerRef, reducedMotion }) {
-  useFrame((state, rawDelta) => {
-    if (reducedMotion) return;
-    const dt = Math.min(rawDelta, 0.05);
-    const px = pointerRef.current?.x ?? 0;
-    const py = pointerRef.current?.y ?? 0;
-    state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, px * 0.55, 1 - Math.exp(-3.5 * dt));
-    state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, 2.05 + py * 0.3, 1 - Math.exp(-3.5 * dt));
-  });
-  return null;
-}
-
 export const HeroScene3D = ({ heroPreview = null }) => {
   const { isSoftwareRenderer, reducedMotion } = useWebGLCapabilities();
-  const pointerRef = useRef({ x: 0, y: 0 });
   const [contextLost, setContextLost] = useState(false);
 
   const previewSymbol = heroPreview?.symbol || '^NSEI';
@@ -465,25 +452,11 @@ export const HeroScene3D = ({ heroPreview = null }) => {
     >
       <div
         className="relative w-full h-[430px] sm:h-[500px] lg:h-[540px] rounded-3xl overflow-hidden border border-[rgba(125,160,255,0.22)] bg-[radial-gradient(circle_at_50%_38%,rgba(77,141,255,0.22),rgba(16,24,43,0.92)_68%,#070B1A_100%)]"
-        onPointerMove={e => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          pointerRef.current = {
-            x: ((e.clientX - rect.left) / rect.width - 0.5) * 2,
-            y: -((e.clientY - rect.top) / rect.height - 0.5) * 2,
-          };
-        }}
-        onPointerLeave={() => {
-          pointerRef.current = { x: 0, y: 0 };
-        }}
+
       >
-        {contextLost ? (
-          <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#AAB7D0] p-6 text-center">
-            3D WebGL context paused — reloading graphics surface...
-          </div>
-        ) : (
           <Canvas
-            dpr={isSoftwareRenderer ? 1 : [1, 1.75]}
-            camera={{ position: [0, 2.05, 6.25], fov: 42, near: 0.1, far: 50 }}
+            dpr={isSoftwareRenderer ? 1 : [1, 1.5]}
+            camera={{ position: [0, 3.6, 11.5], fov: 44, near: 0.1, far: 60 }}
             gl={{ antialias: !isSoftwareRenderer, alpha: true, powerPreference: 'high-performance' }}
             onCreated={({ gl }) => {
               const canvas = gl.domElement;
@@ -504,7 +477,7 @@ export const HeroScene3D = ({ heroPreview = null }) => {
             <pointLight position={[2.2, 1.2, 2.5]} intensity={1.5} distance={7} color="#FF586A" />
 
             {/* Procedural HDR Studio Reflections (zero external network fetches) */}
-            <Environment resolution={256}>
+            <Environment resolution={128}>
               <Lightformer intensity={2.2} color="#38D9F5" position={[0, 5, -4]} scale={[10, 4, 1]} />
               <Lightformer intensity={1.8} color="#31E981" position={[-6, 2, 2]} scale={[6, 3, 1]} />
               <Lightformer intensity={1.6} color="#9065FF" position={[6, 2, 2]} scale={[6, 3, 1]} />
@@ -515,11 +488,10 @@ export const HeroScene3D = ({ heroPreview = null }) => {
             <BullSculpture reducedMotion={reducedMotion} />
             <BearSculpture reducedMotion={reducedMotion} />
             <HolographicDisplay reducedMotion={reducedMotion} />
-            <AmbientParticles count={isSoftwareRenderer ? 50 : 110} reducedMotion={reducedMotion} />
-            <CameraRig pointerRef={pointerRef} reducedMotion={reducedMotion} />
+            <AmbientParticles count={isSoftwareRenderer ? 30 : 65} reducedMotion={reducedMotion} />
 
             {/* Floating perimeter analytics cards inside 3D stage (opaque navy, no backdrop-blur) */}
-            <Html position={[-2.48, 2.78, 0.2]} center distanceFactor={8} zIndexRange={[10, 0]}>
+            <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[-2.48, 2.78, 0.2]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
               <div className="pointer-events-none select-none w-44 rounded-xl bg-[#0B1226]/95 border border-[#31E981]/35 p-2.5 shadow-lg">
                 <div className="text-[9px] font-mono uppercase tracking-wider text-[#31E981]">
                   {previewSymbol} · Market Snapshot
@@ -535,7 +507,7 @@ export const HeroScene3D = ({ heroPreview = null }) => {
               </div>
             </Html>
 
-            <Html position={[2.48, 2.6, 0.2]} center distanceFactor={8} zIndexRange={[10, 0]}>
+            <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[2.48, 2.6, 0.2]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
               <div className="pointer-events-none select-none w-44 rounded-xl bg-[#0B1226]/95 border border-[#38D9F5]/35 p-2.5 shadow-lg">
                 <div className="text-[9px] font-mono uppercase tracking-wider text-[#38D9F5]">
                   Next-Session AI Engine
@@ -553,7 +525,7 @@ export const HeroScene3D = ({ heroPreview = null }) => {
               </div>
             </Html>
 
-            <Html position={[0, 3.38, -0.75]} center distanceFactor={8.5} zIndexRange={[10, 0]}>
+            <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[0, 3.38, -0.75]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
               <div className="pointer-events-none select-none rounded-lg bg-[#0B1226]/92 border border-[#4D8DFF]/35 px-3 py-1.5 shadow-md whitespace-nowrap">
                 <span className="text-[9px] font-mono uppercase tracking-widest text-[#38D9F5]">
                   3D Holographic Order &amp; Trend Matrix
@@ -567,8 +539,10 @@ export const HeroScene3D = ({ heroPreview = null }) => {
               enableZoom={false}
               enablePan={false}
               enableRotate={true}
-              autoRotate={true}
-              autoRotateSpeed={0.6}
+              autoRotate={false}
+              target={[0, 1.25, 0]}
+              minAzimuthAngle={-Math.PI / 5}
+              maxAzimuthAngle={Math.PI / 5}
               enableDamping={true}
               dampingFactor={0.05}
               minPolarAngle={Math.PI / 4}
@@ -577,11 +551,13 @@ export const HeroScene3D = ({ heroPreview = null }) => {
 
 
           </Canvas>
+        {contextLost && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#070B1A]/90 text-xs font-mono text-[#AAB7D0]">3D graphics paused — waiting for WebGL restoration...</div>
         )}
 
         {/* Subtle interactive cue at bottom corner */}
         <div className="pointer-events-none absolute bottom-3 left-4 right-4 flex items-center justify-between text-[10px] font-mono text-[#7B8AA8]">
-          <span>Interactive 3D Terminal · Drag to orbit</span>
+          <span>Interactive 3D Terminal · Drag to orbit · Hover models</span>
           <span className="text-[#38D9F5]">WebGL Scene</span>
         </div>
       </div>
