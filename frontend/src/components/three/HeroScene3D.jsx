@@ -35,6 +35,9 @@ function BullSculpture({ position = [-1.45, 0, 0.72], reducedMotion = false }) {
       const t = state.clock.elapsedTime;
       groupRef.current.position.y = position[1] + Math.sin(t * 1.4) * 0.035;
       const targetScale = hovered ? 1.10 : 1.0;
+      if (hovered) {
+        groupRef.current.rotation.y += dt * 1.5;
+      }
       groupRef.current.scale.setScalar(THREE.MathUtils.damp(groupRef.current.scale.x, targetScale, 8, dt));
     }
   });
@@ -145,6 +148,9 @@ function BearSculpture({ position = [1.48, 0, 0.72], reducedMotion = false }) {
       const t = state.clock.elapsedTime;
       groupRef.current.position.y = position[1] + Math.sin(t * 1.4 + Math.PI) * 0.03;
       const targetScale = hovered ? 1.10 : 1.0;
+      if (hovered) {
+        groupRef.current.rotation.y += dt * 1.5;
+      }
       groupRef.current.scale.setScalar(THREE.MathUtils.damp(groupRef.current.scale.x, targetScale, 8, dt));
     }
   });
@@ -454,103 +460,103 @@ export const HeroScene3D = ({ heroPreview = null }) => {
         className="relative w-full h-[430px] sm:h-[500px] lg:h-[540px] rounded-3xl overflow-hidden border border-[rgba(125,160,255,0.22)] bg-[radial-gradient(circle_at_50%_38%,rgba(77,141,255,0.22),rgba(16,24,43,0.92)_68%,#070B1A_100%)]"
 
       >
-          <Canvas
-            dpr={isSoftwareRenderer ? 1 : [1, 1.5]}
-            camera={{ position: [0, 3.6, 11.5], fov: 44, near: 0.1, far: 60 }}
-            gl={{ antialias: !isSoftwareRenderer, alpha: true, powerPreference: 'high-performance' }}
-            onCreated={({ gl }) => {
-              const canvas = gl.domElement;
-              canvas.addEventListener('webglcontextlost', e => {
-                e.preventDefault();
-                setContextLost(true);
-              });
-              canvas.addEventListener('webglcontextrestored', () => {
-                setContextLost(false);
-              });
-            }}
-          >
-            <fog attach="fog" args={['#070B1A', 8, 19]} />
-            <ambientLight intensity={0.45} color="#A6C4FF" />
-            <directionalLight position={[4, 6, 5]} intensity={1.8} color="#38D9F5" />
-            <directionalLight position={[-4.5, 4, 3]} intensity={1.6} color="#31E981" />
-            <pointLight position={[0, 3.2, 1.5]} intensity={2.2} distance={10} color="#9065FF" />
-            <pointLight position={[2.2, 1.2, 2.5]} intensity={1.5} distance={7} color="#FF586A" />
+        <Canvas
+        className="transition-transform duration-700 ease-in-out hover:scale-[1.08]"
+          dpr={isSoftwareRenderer ? 1 : [1, 1.5]}
+          camera={{ position: [0, 3.6, 11.5], fov: 44, near: 0.1, far: 60 }}
+          gl={{ antialias: !isSoftwareRenderer, alpha: true, powerPreference: 'high-performance' }}
+          onCreated={({ gl }) => {
+            const canvas = gl.domElement;
+            canvas.addEventListener('webglcontextlost', e => {
+              e.preventDefault();
+              setContextLost(true);
+            });
+            canvas.addEventListener('webglcontextrestored', () => {
+              setContextLost(false);
+            });
+          }}
+        >
+          <fog attach="fog" args={['#070B1A', 8, 19]} />
+          <ambientLight intensity={0.45} color="#A6C4FF" />
+          <directionalLight position={[4, 6, 5]} intensity={1.8} color="#38D9F5" />
+          <directionalLight position={[-4.5, 4, 3]} intensity={1.6} color="#31E981" />
+          <pointLight position={[0, 3.2, 1.5]} intensity={2.2} distance={10} color="#9065FF" />
+          <pointLight position={[2.2, 1.2, 2.5]} intensity={1.5} distance={7} color="#FF586A" />
 
-            {/* Procedural HDR Studio Reflections (zero external network fetches) */}
-            <Environment resolution={128}>
-              <Lightformer intensity={2.2} color="#38D9F5" position={[0, 5, -4]} scale={[10, 4, 1]} />
-              <Lightformer intensity={1.8} color="#31E981" position={[-6, 2, 2]} scale={[6, 3, 1]} />
-              <Lightformer intensity={1.6} color="#9065FF" position={[6, 2, 2]} scale={[6, 3, 1]} />
-              <Lightformer intensity={1.2} color="#4D8DFF" position={[0, -3, 3]} scale={[8, 4, 1]} />
-            </Environment>
+          {/* Procedural HDR Studio Reflections (zero external network fetches) */}
+          <Environment resolution={128}>
+            <Lightformer intensity={2.2} color="#38D9F5" position={[0, 5, -4]} scale={[10, 4, 1]} />
+            <Lightformer intensity={1.8} color="#31E981" position={[-6, 2, 2]} scale={[6, 3, 1]} />
+            <Lightformer intensity={1.6} color="#9065FF" position={[6, 2, 2]} scale={[6, 3, 1]} />
+            <Lightformer intensity={1.2} color="#4D8DFF" position={[0, -3, 3]} scale={[8, 4, 1]} />
+          </Environment>
 
-            <TerminalBase reducedMotion={reducedMotion} />
-            <BullSculpture reducedMotion={reducedMotion} />
-            <BearSculpture reducedMotion={reducedMotion} />
-            <HolographicDisplay reducedMotion={reducedMotion} />
-            <AmbientParticles count={isSoftwareRenderer ? 30 : 65} reducedMotion={reducedMotion} />
+          <TerminalBase reducedMotion={reducedMotion} />
+          <BullSculpture reducedMotion={reducedMotion} />
+          <BearSculpture reducedMotion={reducedMotion} />
+          <HolographicDisplay reducedMotion={reducedMotion} />
+          <AmbientParticles count={isSoftwareRenderer ? 30 : 65} reducedMotion={reducedMotion} />
 
-            {/* Floating perimeter analytics cards inside 3D stage (opaque navy, no backdrop-blur) */}
-            <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[-2.48, 2.78, 0.2]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
-              <div className="pointer-events-none select-none w-44 rounded-xl bg-[#0B1226]/95 border border-[#31E981]/35 p-2.5 shadow-lg">
-                <div className="text-[9px] font-mono uppercase tracking-wider text-[#31E981]">
-                  {previewSymbol} · Market Snapshot
-                </div>
-                <div className="text-xs font-mono font-bold text-[#F8FAFF] tabular-nums mt-0.5">
-                  {previewPrice || 'Yahoo Finance Feed'}
-                </div>
-                <div className="text-[10px] font-mono text-[#AAB7D0] mt-0.5">
-                  {heroPreview?.changePercent != null
-                    ? formatSignedPercent(heroPreview.changePercent)
-                    : '14 Technical Features'}
-                </div>
+          {/* Floating perimeter analytics cards inside 3D stage (opaque navy, no backdrop-blur) */}
+          <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[-2.48, 2.78, 0.2]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
+            <div className="pointer-events-none select-none w-44 rounded-xl bg-[#0B1226]/95 border border-[#31E981]/35 p-2.5 shadow-lg">
+              <div className="text-[9px] font-mono uppercase tracking-wider text-[#31E981]">
+                {previewSymbol} · Market Snapshot
               </div>
-            </Html>
-
-            <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[2.48, 2.6, 0.2]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
-              <div className="pointer-events-none select-none w-44 rounded-xl bg-[#0B1226]/95 border border-[#38D9F5]/35 p-2.5 shadow-lg">
-                <div className="text-[9px] font-mono uppercase tracking-wider text-[#38D9F5]">
-                  Next-Session AI Engine
-                </div>
-                <div className="text-xs font-mono font-bold text-[#F8FAFF] tabular-nums mt-0.5">
-                  {hasVerifiedPred
-                    ? formatAssetPrice(previewPred.predicted_next_close, previewSymbol)
-                    : 'LR · RF · LSTM'}
-                </div>
-                <div className="text-[10px] font-mono text-[#AAB7D0] mt-0.5">
-                  {hasVerifiedPred
-                    ? `${previewPred.selected_model} · ${previewPred.signal}`
-                    : 'Lowest Validation MAE'}
-                </div>
+              <div className="text-xs font-mono font-bold text-[#F8FAFF] tabular-nums mt-0.5">
+                {previewPrice || 'Yahoo Finance Feed'}
               </div>
-            </Html>
-
-            <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[0, 3.38, -0.75]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
-              <div className="pointer-events-none select-none rounded-lg bg-[#0B1226]/92 border border-[#4D8DFF]/35 px-3 py-1.5 shadow-md whitespace-nowrap">
-                <span className="text-[9px] font-mono uppercase tracking-widest text-[#38D9F5]">
-                  3D Holographic Order &amp; Trend Matrix
-                </span>
+              <div className="text-[10px] font-mono text-[#AAB7D0] mt-0.5">
+                {heroPreview?.changePercent != null
+                  ? formatSignedPercent(heroPreview.changePercent)
+                  : '14 Technical Features'}
               </div>
-            </Html>
+            </div>
+          </Html>
+
+          <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[2.48, 2.6, 0.2]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
+            <div className="pointer-events-none select-none w-44 rounded-xl bg-[#0B1226]/95 border border-[#38D9F5]/35 p-2.5 shadow-lg">
+              <div className="text-[9px] font-mono uppercase tracking-wider text-[#38D9F5]">
+                Next-Session AI Engine
+              </div>
+              <div className="text-xs font-mono font-bold text-[#F8FAFF] tabular-nums mt-0.5">
+                {hasVerifiedPred
+                  ? formatAssetPrice(previewPred.predicted_next_close, previewSymbol)
+                  : 'LR · RF · LSTM'}
+              </div>
+              <div className="text-[10px] font-mono text-[#AAB7D0] mt-0.5">
+                {hasVerifiedPred
+                  ? `${previewPred.selected_model} · ${previewPred.signal}`
+                  : 'Lowest Validation MAE'}
+              </div>
+            </div>
+          </Html>
+
+          <Html pointerEvents="none" style={{ pointerEvents: 'none' }} position={[0, 3.38, -0.75]} center distanceFactor={6.5} zIndexRange={[10, 0]}>
+            <div className="pointer-events-none select-none rounded-lg bg-[#0B1226]/92 border border-[#4D8DFF]/35 px-3 py-1.5 shadow-md whitespace-nowrap">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-[#38D9F5]">
+                3D Holographic Order &amp; Trend Matrix
+              </span>
+            </div>
+          </Html>
 
 
 
-            <OrbitControls
-              enableZoom={false}
-              enablePan={false}
-              enableRotate={true}
-              autoRotate={false}
-              target={[0, 1.25, 0]}
-              minAzimuthAngle={-Math.PI / 5}
-              maxAzimuthAngle={Math.PI / 5}
-              enableDamping={true}
-              dampingFactor={0.05}
-              minPolarAngle={Math.PI / 4}
-              maxPolarAngle={Math.PI / 2.02}
-            />
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            enableRotate={true}
+            autoRotate={!reducedMotion}
+            autoRotateSpeed={0.8}
+            target={[0, 1.25, 0]}
+            enableDamping={true}
+            dampingFactor={0.05}
+            minPolarAngle={Math.PI / 4}
+            maxPolarAngle={Math.PI / 2.02}
+          />
 
 
-          </Canvas>
+        </Canvas>
         {contextLost && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#070B1A]/90 text-xs font-mono text-[#AAB7D0]">3D graphics paused — waiting for WebGL restoration...</div>
         )}

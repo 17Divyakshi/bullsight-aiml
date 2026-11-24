@@ -64,7 +64,7 @@ function NetworkGraph({ reducedMotion = false, onHoverNode }) {
     const dt = Math.min(rawDelta, 0.05);
     const t = reducedMotion ? 0 : state.clock.elapsedTime;
     if (groupRef.current && !reducedMotion) {
-      groupRef.current.rotation.y = Math.sin(t * 0.25) * 0.18;
+      groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.35;
     }
     if (pulsesRef.current) {
       edges.forEach((edge, i) => {
@@ -183,7 +183,15 @@ export const NeuralNetwork3D = () => {
             <pointLight position={[-3, -2, 3]} intensity={1.8} color="#9065FF" />
 
             <NetworkGraph reducedMotion={reducedMotion} onHoverNode={setHoveredNode} />
-            <OrbitControls enableZoom={false} enablePan={false} />
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              enableRotate={true}
+              enableDamping={true}
+              dampingFactor={0.05}
+              minAzimuthAngle={-Math.PI / 4}
+              maxAzimuthAngle={Math.PI / 4}
+            />
           </Canvas>
         )}
 

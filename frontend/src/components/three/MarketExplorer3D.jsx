@@ -25,13 +25,24 @@ function MarketPillar({
   const x = Math.sin(angle) * radius;
   const z = Math.cos(angle) * radius - 1.65;
 
-  const pct = node?.changePercent != null ? Number(node.changePercent) : null;
+  const rawPct = node?.changePercent;
+
+  const pct = rawPct != null && Number.isFinite(Number(rawPct))
+    ? Number(rawPct)
+    : null;
+
   const hasPrice = node?.price != null;
-  const isPos = pct != null ? pct >= 0 : true;
-  const height = hasPrice ? Math.min(2.6, Math.max(0.85, 1.35 + (pct ?? 0) * 0.28)) : 1.0;
+  const isPos = pct != null && pct >= 0;
 
-  const color = !hasPrice ? '#4D8DFF' : isPos ? '#31E981' : '#FF586A';
+  const height = hasPrice
+    ? Math.min(2.6, Math.max(0.85, 1.35 + (pct ?? 0) * 0.28))
+    : 1.0;
 
+  const color = !hasPrice || pct === null
+    ? '#4D8DFF'
+    : isPos
+      ? '#31E981'
+      : '#FF586A';
   useFrame((state, rawDelta) => {
     if (!meshRef.current) return;
     const dt = Math.min(rawDelta, 0.05);
@@ -83,11 +94,10 @@ function MarketPillar({
         <button
           type="button"
           onClick={() => onSelect(node.symbol)}
-          className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all whitespace-nowrap border ${
-            isSelected
-              ? 'bg-[#070B1A] text-[#31E981] border-[#31E981]'
-              : 'bg-[#0B1226]/95 text-[#F8FAFF] border-[rgba(125,160,255,0.28)] hover:border-[#38D9F5]'
-          }`}
+          className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all whitespace-nowrap border ${isSelected
+            ? 'bg-[#070B1A] text-[#31E981] border-[#31E981]'
+            : 'bg-[#0B1226]/95 text-[#F8FAFF] border-[rgba(125,160,255,0.28)] hover:border-[#38D9F5]'
+            }`}
         >
           {node.shortLabel}
           {pct != null && (
@@ -166,6 +176,7 @@ export const MarketExplorer3D = ({
           >
             <div className="relative h-[340px] w-full rounded-2xl overflow-hidden border border-[rgba(125,160,255,0.18)] bg-[radial-gradient(circle_at_50%_40%,rgba(56,217,245,0.16),#070B1A_80%)]">
               <Canvas
+              className="transition-transform duration-500 ease-out hover:scale-105"
                 dpr={isSoftwareRenderer ? 1 : [1, 1.5]}
                 camera={{ position: [0, 3.1, 5.2], fov: 42, near: 0.1, far: 40 }}
                 gl={{ antialias: !isSoftwareRenderer, alpha: true }}
@@ -195,6 +206,12 @@ export const MarketExplorer3D = ({
 
                 <OrbitControls
                   enableZoom={true}
+                  enablePan={false}
+                  enableRotate={true}
+                  autoRotate={!reducedMotion}
+                  autoRotateSpeed={1.2}
+                  enableDamping={true}
+                  dampingFactor={0.05}
                   minDistance={3.5}
                   maxDistance={9}
                   maxPolarAngle={Math.PI / 2.1}
@@ -240,13 +257,12 @@ export const MarketExplorer3D = ({
               <div className="flex justify-between">
                 <span className="text-[#7B8AA8]">Session Change</span>
                 <span
-                  className={`font-bold tabular-nums ${
-                    activeNode?.changePercent == null
-                      ? 'text-[#7B8AA8]'
-                      : Number(activeNode.changePercent) >= 0
-                        ? 'text-[#31E981]'
-                        : 'text-[#FF586A]'
-                  }`}
+                  className={`font-bold tabular-nums ${activeNode?.changePercent == null
+                    ? 'text-[#7B8AA8]'
+                    : Number(activeNode.changePercent) >= 0
+                      ? 'text-[#31E981]'
+                      : 'text-[#FF586A]'
+                    }`}
                 >
                   {activeNode?.changePercent != null
                     ? formatSignedPercent(activeNode.changePercent)
