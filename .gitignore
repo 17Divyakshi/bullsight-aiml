@@ -8,3 +8,19 @@ build/
 .env.*
 !.env.example
 *.pyc
+
+# Local database files
+mongodb_data/
+backend/bullsight.db
+backend/bullsight.db-*
+
+# Python environment
+.venv/
+__pycache__/
+
+# Local environment secrets
+.env
+.env.local
+
+# Node dependencies
+node_modules/
