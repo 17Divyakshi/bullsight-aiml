@@ -29,9 +29,28 @@ export function isCE2SupportedSymbol(symbol = '') {
 
 function symbolFolderCandidates(symbol) {
   const sym = sanitizeSymbol(symbol);
+
+  const aliases = {
+    '^NSEI': 'NIFTY50',
+    'RELIANCE.NS': 'RELIANCE',
+    'TCS.NS': 'TCS',
+    'INFY.NS': 'INFOSYS',
+    'HDFCBANK.NS': 'HDFCBANK',
+  };
+
   const noCaret = sym.replace(/\^/g, '');
   const underscored = noCaret.replace(/[.\-]/g, '_');
-  return [...new Set([underscored, noCaret, sym, sym.toLowerCase(), underscored.toLowerCase()])];
+  const base = noCaret.replace(/\.NS$/, '');
+
+  return [...new Set([
+    aliases[sym],
+    base,
+    underscored,
+    noCaret,
+    sym,
+    sym.toLowerCase(),
+    underscored.toLowerCase()
+  ].filter(Boolean))];
 }
 
 function safeResolveInside(baseDir, targetPath) {
@@ -198,8 +217,23 @@ export function inspectStockArtifacts(symbol) {
   const lrPath = findFirstExisting(searchBase, ['linear_regression.joblib', 'linear_regression.pkl', `${safeTag}_linear_regression.joblib`, `${safeTag}_lr.pkl`]);
   const rfPath = findFirstExisting(searchBase, ['random_forest.joblib', 'random_forest.pkl', `${safeTag}_random_forest.joblib`, `${safeTag}_rf.pkl`]);
   const lstmPath = findFirstExisting(searchBase, ['lstm_model.keras', 'lstm.keras', 'lstm_model.h5', `${safeTag}_lstm.keras`]);
-  const featScalerPath = findFirstExisting(searchBase, ['feature_scaler.joblib', 'feature_scaler.pkl', 'scaler_X.pkl', 'scaler_x.joblib', 'x_scaler.pkl']);
-  const targetScalerPath = findFirstExisting(searchBase, ['target_scaler.joblib', 'target_scaler.pkl', 'scaler_y.pkl', 'scaler_y.joblib', 'y_scaler.pkl']);
+const featScalerPath = findFirstExisting(searchBase, [
+  'lstm_feature_scaler.joblib',
+  'feature_scaler.joblib',
+  'feature_scaler.pkl',
+  'scaler_X.pkl',
+  'scaler_x.joblib',
+  'x_scaler.pkl'
+]);
+
+const targetScalerPath = findFirstExisting(searchBase, [
+  'lstm_target_scaler.joblib',
+  'target_scaler.joblib',
+  'target_scaler.pkl',
+  'scaler_y.pkl',
+  'scaler_y.joblib',
+  'y_scaler.pkl'
+]);
 
   if (lrPath) foundFiles.linear_regression = lrPath;
   if (rfPath) foundFiles.random_forest = rfPath;

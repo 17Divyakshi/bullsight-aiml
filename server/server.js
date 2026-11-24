@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
 
 // Connect to MongoDB (gracefully falls back to in-memory store if offline)
